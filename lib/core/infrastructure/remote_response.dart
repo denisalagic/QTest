@@ -7,6 +7,6 @@ class RemoteResponse<T> with _$RemoteResponse<T> {
   const RemoteResponse._();
 
   const factory RemoteResponse.noConnection() = _NoConection<T>;
-  const factory RemoteResponse.notModified({required int maxPage}) = _NotModified<T>;
-  const factory RemoteResponse.withNewData(T data, {required int maxPage}) = _WithNewData<T>;
+  const factory RemoteResponse.notModified() = _NotModified<T>;
+  const factory RemoteResponse.withNewData(T data) = _WithNewData<T>;
 }
