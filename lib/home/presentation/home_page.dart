@@ -60,13 +60,11 @@ class _HomePageState extends ConsumerState<HomePage> {
         final state = ref.watch(homeNotifierProvider);
         return NotificationListener<ScrollNotification>(
           onNotification: (notification) {
-            final metrics = notification.metrics;
-            final limit =
-                metrics.maxScrollExtent - metrics.viewportDimension / 3;
-            if (canLoadNextPage && metrics.pixels >= limit) {
+            if (canLoadNextPage && notification.metrics.extentAfter < 500) {
               canLoadNextPage = false;
               getNextPage();
             }
+
             return false;
           },
           child: RefreshIndicator(
