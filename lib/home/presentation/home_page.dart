@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:qtest/home/application/home_notifier.dart';
+import 'package:qtest/home/presentation/widgets/failure_widget.dart';
 import 'package:qtest/home/presentation/widgets/post_list_view.dart';
 import 'package:qtest/home/shared/providers.dart';
 
@@ -68,19 +69,21 @@ class _HomePageState extends ConsumerState<HomePage> {
             }
             return false;
           },
-          child: state.maybeWhen(
-                  loadSuccess: (posts) => posts.entity.isEmpty,
-                  orElse: () => false)
-              ? Container()
-              : RefreshIndicator(
-                  onRefresh: () {
-                    return ref.read(homeNotifierProvider.notifier).refresh();
-                  },
-                  child: PostListView(
+          child: RefreshIndicator(
+            onRefresh: () {
+              return ref.read(homeNotifierProvider.notifier).refresh();
+            },
+            child: state.maybeWhen(
+                    loadSuccess: (posts) => posts.entity.isEmpty,
+                    orElse: () => false)
+                ? const FailureWidget(
+                    message: 'Ups. Something went wrong!',
+                  )
+                : PostListView(
                     state: state,
                     retry: getNextPage,
                   ),
-                ),
+          ),
         );
       }),
     );
