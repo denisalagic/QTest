@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class FailureWidget extends StatelessWidget {
-  const FailureWidget({required this.message, Key? key}) : super(key: key);
+  const FailureWidget({required this.message, required this.retry, Key? key})
+      : super(key: key);
 
   final String message;
+  final Function retry;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,11 @@ class FailureWidget extends StatelessWidget {
             style: Theme.of(context).textTheme.headline5,
             textAlign: TextAlign.center,
           ),
+          ElevatedButton(
+              onPressed: () {
+                retry();
+              },
+              child: const Text('Retry')),
         ],
       ),
     );

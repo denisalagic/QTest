@@ -52,6 +52,6 @@ class HomeNotifier extends StateNotifier<HomeState> {
 
   Future<void> refresh() async {
     resetState();
-    getNextPage();
+    await getNextPage();
   }
 }

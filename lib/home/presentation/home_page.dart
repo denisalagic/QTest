@@ -15,7 +15,6 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  bool canLoadNextPage = false;
   bool hasAlreadyShowedNoConnectionToast = false;
 
   @override
@@ -53,7 +52,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                   hasAlreadyShowedNoConnectionToast = true;
                   _showToast(context);
                 }
-                canLoadNextPage = _.posts.isNextPageAvailable ?? false;
               },
               loadFailed: (_) => false);
         });
@@ -63,8 +61,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             final metrics = notification.metrics;
             final limit =
                 metrics.maxScrollExtent - metrics.viewportDimension / 3;
-            if (canLoadNextPage && metrics.pixels >= limit) {
-              canLoadNextPage = false;
+            if (metrics.pixels >= limit) {
               getNextPage();
             }
             return false;
@@ -76,8 +73,12 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: state.maybeWhen(
                     loadSuccess: (posts) => posts.entity.isEmpty,
                     orElse: () => false)
-                ? const FailureWidget(
-                    message: 'Ups. Something went wrong!',
+                ? FailureWidget(
+                    message:
+                        'Ups. Something went wrong! Check your network connection and click retry!',
+                    retry: () async {
+                      await ref.read(homeNotifierProvider.notifier).refresh();
+                    },
                   )
                 : PostListView(
                     state: state,
