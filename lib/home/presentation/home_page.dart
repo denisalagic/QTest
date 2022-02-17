@@ -15,6 +15,7 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  bool canLoadNextPage = false;
   bool hasAlreadyShowedNoConnectionToast = false;
 
   @override
@@ -52,6 +53,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   hasAlreadyShowedNoConnectionToast = true;
                   _showToast(context);
                 }
+                canLoadNextPage = _.posts.isNextPageAvailable ?? false;
               },
               loadFailed: (_) => false);
         });
@@ -61,7 +63,8 @@ class _HomePageState extends ConsumerState<HomePage> {
             final metrics = notification.metrics;
             final limit =
                 metrics.maxScrollExtent - metrics.viewportDimension / 3;
-            if (metrics.pixels >= limit) {
+            if (canLoadNextPage && metrics.pixels >= limit) {
+              canLoadNextPage = false;
               getNextPage();
             }
             return false;
