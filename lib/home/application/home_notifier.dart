@@ -49,4 +49,9 @@ class HomeNotifier extends StateNotifier<HomeState> {
           r.copyWith(entity: [...state.posts.entity, ...r.entity]));
     });
   }
+
+  Future<void> refresh() async {
+    resetState();
+    getNextPage();
+  }
 }

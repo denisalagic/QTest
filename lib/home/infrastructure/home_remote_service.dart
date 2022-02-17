@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:qtest/core/infrastructure/dio_extensions.dart';
 import 'package:qtest/core/infrastructure/remote_response.dart';
 import 'package:qtest/home/infrastructure/pagination_config.dart';
@@ -14,7 +15,7 @@ class HomeRemoteService {
   HomeRemoteService(this._dio, this._headersCache);
 
   Future<RemoteResponse<List<PostDto>>> getPosts(page) async {
-    final requestUri = Uri.https('jsonplaceholder.typicode.com', '/comments',
+    final requestUri = Uri.https(dotenv.env['API_URL'] ?? '', '/comments',
         {'_page': '$page', '_limit': PaginationConfig.itemsPerPage.toString()});
     final previousHeaders = await _headersCache.getHeaders(requestUri);
     try {

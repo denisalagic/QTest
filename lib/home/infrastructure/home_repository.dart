@@ -13,20 +13,21 @@ class HomeRepository {
 
   HomeRepository(this._homeLocalService, this._homeRemoteService);
 
-
-  Future<Either<ApiFailure, Fresh<List<Post>>>> getPostPage(
-      int page) async {
+  Future<Either<ApiFailure, Fresh<List<Post>>>> getPostPage(int page) async {
     try {
       final remotePageItems = await _homeRemoteService.getPosts(page);
       return right(await remotePageItems.when(
           noConnection: () async => Fresh.no(
               await _homeLocalService.getPage(page).then((_) => _.toDomain()),
-              isNextPageAvailable: page < await _homeLocalService.getLocalPageCount()),
-          notModified: () async =>
-              Fresh.yes(await _homeLocalService.getPage(page).then((_) => _.toDomain())),
+              isNextPageAvailable:
+                  page < await _homeLocalService.getLocalPageCount()),
+          notModified: () async => Fresh.yes(
+              await _homeLocalService.getPage(page).then((_) => _.toDomain()),
+              isNextPageAvailable: true),
           withNewData: (data) async {
             await _homeLocalService.upsertPage(data, page);
-            return Fresh.yes(data.toDomain());
+            return Fresh.yes(data.toDomain(),
+                isNextPageAvailable: data.isNotEmpty);
           }));
     } on RestApiException catch (e) {
       return left(ApiFailure.api(e.errorCode));
